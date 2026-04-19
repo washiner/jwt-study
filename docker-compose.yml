@@ -1,0 +1,55 @@
+# ==========================================
+# DOCKER COMPOSE — AMBIENTE DE DESENVOLVIMENTO
+# ==========================================
+# Esse arquivo sobe o banco de dados Postgres em um container.
+# Assim você não precisa instalar o Postgres na sua máquina.
+#
+# Para subir:  docker compose up -d
+# Para parar:  docker compose down
+# Para ver os logs: docker compose logs -f
+
+services:
+
+  # ==========================================
+  # BANCO DE DADOS POSTGRES
+  # ==========================================
+  postgres:
+    # Imagem oficial do Postgres no Docker Hub.
+    # O :15 define a versão. Fixa a versão sempre —
+    # usar "latest" pode quebrar o projeto numa atualização.
+    image: postgres:15
+
+    # Nome do container que vai aparecer no Docker Desktop.
+    container_name: jwt_study_db
+
+    # Reinicia automaticamente se o container cair.
+    # "unless-stopped" = reinicia sempre, exceto se você
+    # parar manualmente com docker compose down.
+    restart: unless-stopped
+
+    # Variáveis de ambiente que o Postgres lê na primeira vez
+    # que sobe para criar o banco e o usuário.
+    environment:
+      POSTGRES_DB: jwt_study
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+
+    # Porta: a esquerda é a porta da sua máquina,
+    # a direita é a porta dentro do container.
+    # 5432:5432 = você acessa localhost:5432 e chega no Postgres.
+    ports:
+      - "5432:5432"
+
+    # Volume = onde os dados ficam salvos no seu computador.
+    # Sem isso, toda vez que o container reiniciar você perde
+    # tudo que estava no banco.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# ==========================================
+# VOLUMES
+# ==========================================
+# Declara o volume usado acima.
+# O Docker gerencia onde fica no seu sistema de arquivos.
+volumes:
+  postgres_data:

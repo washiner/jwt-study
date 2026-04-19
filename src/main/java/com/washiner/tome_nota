@@ -1,0 +1,39 @@
+Fluxo de LOGIN:
+[POST /auth/login]
+       ↓
+AuthController    ← recebe a requisição
+       ↓
+AuthService       ← valida email e senha
+       ↓
+JwtService        ← gera o token
+       ↓
+retorna o token para o cliente
+Fluxo de uma requisição PROTEGIDA:
+[GET /users/me + token no header]
+       ↓
+JwtAuthenticationFilter   ← intercepta TODA requisição
+       ↓
+JwtService                ← valida o token
+       ↓
+UserRepository            ← busca o usuário pelo email
+       ↓
+SecurityConfig            ← confirma que está autenticado
+       ↓
+UserController            ← executa e retorna a resposta
+
+
+O JwtAuthenticationFilter é o porteiro. Ele fica na frente de tudo.
+
+requisição chega → JwtAuthenticationFilter → valida token → libera ou bloqueia
+
+Esse arquivo é o porteiro. Ele roda antes de qualquer controller. Toda requisição
+— com token ou sem token — passa por ele primeiro.
+A pergunta que ele responde é:
+
+"Essa requisição tem um token válido? Se sim, autentica o usuário no Spring Security. Se não,
+ deixa passar sem autenticar — o Spring Security vai bloquear se a rota precisar de autenticação."
+
+-------------------------
+
+
+
